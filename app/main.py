@@ -3,55 +3,17 @@ from datetime import datetime, timezone
 
 import plotly.graph_objects as go
 import streamlit as st
+import yaml
 from dateutil.relativedelta import relativedelta
 from streamlit_option_menu import option_menu
+from yaml.loader import SafeLoader
 
-INCOMES = ["Salário", "Fotografia", "Oc3"]
-CATEGORIES = {
-    "Alimentação": ["Mercado", "Lazer", "Trabalho", "Marmita"],
-    "Casa": [
-        "Móveis",
-        "Aluguel",
-        "Condomínio",
-        "Internet",
-        "Gás",
-        "Luz",
-        "Seguro Incêndio",
-        "Cozinha",
-        "Detalhes",
-        "Contas",
-        "Faxina",
-        "IPTU",
-    ],
-    "Celular": ["Lu/Oi"],
-    "Empresa": ["MEI"],
-    "Dog": ["Diversos", "Veterinário", "Ração", "Hospedagem"],
-    "Educação": [
-        "Pós/ESSS",
-        "Livros",
-        "Cursos (MOOCs)",
-        "Inglês",
-        "Bootcamp",
-    ],
-    "HomeOffice": ["Papelaria", "Eletrônicos"],
-    "Hospedagem": ["Trabalho"],
-    "Lazer": ["Viagem", "Cinema", "Desenho"],
-    "Outros": ["Gifts", "Outros"],
-    "Pessoal": ["Vestuário", "Hair", "Estética", "Bunda"],
-    "Planta": ["Químicos", "Planta", "Utensílios"],
-    "Saúde": [
-        "Fisioterapia",
-        "Farmácia",
-        "Suplementos",
-        "Exames",
-        "Consulta",
-        "Olhos",
-        "Academia",
-    ],
-    "Shopee": ["Shopee"],
-    "Transporte": ["App", "Ônibus", "Avião"],
-}
-EXPENSES = ["Rent", "Utilities", "Car", "Hospital", "Others"]
+with open("app/config.yaml") as f:
+    configs = yaml.load(f, Loader=SafeLoader)
+
+CATEGORIES = configs["categories"]
+INCOMES = configs["incomes"]
+EXPENSES = configs["expenses"]
 CURRENCY = "BRA"
 PAGE_TITLE = "Gastos e Entradas"
 PAGE_ICON = ":knife: :money_with_wings:"
