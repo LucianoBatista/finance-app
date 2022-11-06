@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+streamlit = "==1.14"
+plotly = "==5.11"
+streamlit-option-menu = "==0.3.2"
+deta = "==1.1.0"
+python-dotenv = "==0.21.0"
+
+[dev-packages]
+black = "*"
+
+[requires]
+python_version = "3.10"
