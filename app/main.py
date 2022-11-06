@@ -8,30 +8,18 @@ from dateutil.relativedelta import relativedelta
 from streamlit_option_menu import option_menu
 from yaml.loader import SafeLoader
 
+from callbacks.callbacks import callback_clear_session
+
 with open("app/config.yaml") as f:
     configs = yaml.load(f, Loader=SafeLoader)
 
 CATEGORIES = configs["categories"]
 INCOMES = configs["incomes"]
 EXPENSES = configs["expenses"]
-CURRENCY = "BRA"
+CURRENCY = "R$"
 PAGE_TITLE = "Gastos e Entradas"
 PAGE_ICON = ":knife: :money_with_wings:"
 LAYOUT = "centered"
-
-
-def clean_session():
-    for key in st.session_state.keys():
-        del st.session_state[key]
-
-    st.session_state["description"] = ""
-    st.session_state["category_expense"] = "Alimentação"
-    st.session_state["total"] = 0.00
-    st.session_state["type_spent"] = "Variável"
-    st.session_state["type_buy"] = "débito"
-    st.session_state["bank"] = "Nubank"
-    st.session_state["user"] = "Tica"
-
 
 st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON, layout=LAYOUT)
 st.title(PAGE_TITLE + " " + PAGE_ICON)
@@ -158,7 +146,7 @@ if selected == "Entrada da Facada":
 
         st.date_input("Data de Vencimento", date, key="due_date")
 
-    submitted2 = st.button("Send data!", on_click=clean_session)
+    submitted2 = st.button("Send data!", on_click=callback_clear_session)
 
     if submitted2:
         # TODO: data de criação e data do débito
