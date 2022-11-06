@@ -1,0 +1,80 @@
+incomes:
+  - Salário
+  - Fotografia
+  - Oc3
+categories:
+  Alimentação:
+    - Mercado
+    - Lazer
+    - Trabalho 
+    - Marmita
+  Casa:
+    - Móveis
+    - Aluguel
+    - Condomínio
+    - Internet
+    - Gás
+    - Luz
+    - Seguro Incêndio
+    - Cozinha
+    - Detalhes
+    - Contas
+    - Faxina
+    - IPTU
+  Celular:
+    - Lu/Oi
+  Empresa:
+    - MEI
+  Dog:
+    - Diversos
+    - Veterinário
+    - Ração
+    - Hospedagem
+  Educação: 
+    - Pós/ESSS
+    - Livros
+    - Cursos (MOOCs)
+    - Inglês
+    - Bootcamp
+  HomeOffice: 
+    - Papelaria
+    - Eletrônicos
+  Hospedagem:
+    - Trabalho
+  Lazer: 
+    - Viagem
+    - Cinema
+    - Desenho
+  Outros: 
+    - Gifts
+    - Outros
+  Pessoal:
+    - Vestuário
+    - Hair 
+    - Estética 
+    - Bunda
+    - Saúde
+  Planta: 
+    - Químicos
+    - Planta
+    - Utensílios
+  Saúde: 
+    - Fisioterapia
+    - Farmácia
+    - Suplementos
+    - Exames
+    - Consulta
+    - Olhos
+    - Academia
+  Shopee: 
+    - Shopee
+  Transporte:
+    - App
+    - Ônibus
+    - Avião
+expenses:
+  - Rent
+  - Utilities
+  - Car
+  - Hospital
+  - Others
