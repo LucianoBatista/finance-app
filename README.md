@@ -6,5 +6,7 @@
   - deploy no streamlit (free)
   - heroku will not be free anymore
 - Adicionar interação com o banco do Deta
+  - banco for income
+  - banco for expense
 - Melhor modularizar o app para facilitar a manutenção
 - Criar visualizações

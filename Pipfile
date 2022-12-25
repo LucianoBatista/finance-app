@@ -10,9 +10,13 @@ streamlit-option-menu = "==0.3.2"
 deta = "==1.1.0"
 python-dotenv = "==0.21.0"
 pyyaml = "==6.0"
+bokeh = "==3.0.3"
+seaborn = "==0.12.1"
+matplotlib = "==3.6.2"
 
 [dev-packages]
 black = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.10"

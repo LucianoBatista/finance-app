@@ -1,14 +1,22 @@
 import calendar
 from datetime import datetime, timezone
 
+import matplotlib.pyplot as plt
+import pandas as pd
 import plotly.graph_objects as go
+import seaborn as sns
 import streamlit as st
 import yaml
+from callbacks.callbacks import callback_clear_session
+from components.viz import show_values
+from database.database import (
+    fetch_all_periods_expense,
+    fetch_all_periods_income,
+    insert_income,
+)
 from dateutil.relativedelta import relativedelta
 from streamlit_option_menu import option_menu
 from yaml.loader import SafeLoader
-
-from callbacks.callbacks import callback_clear_session
 
 with open("app/config.yaml") as f:
     configs = yaml.load(f, Loader=SafeLoader)
@@ -25,8 +33,8 @@ st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON, layout=LAYOUT)
 st.title(PAGE_TITLE + " " + PAGE_ICON)
 
 # dropdown
-years = [datetime.today().year, datetime.today().year + 1]
-months = list(calendar.month_name[1:])
+years = [2022, 2023]
+months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 # hide streamlit style
 hide_st_style = """
@@ -51,8 +59,8 @@ if selected == "Entrada do Cacau":
     st.header("Entrada do Cacau")
     with st.form("income_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
-        col1.selectbox("Select Month:", months, key="month_income")
-        col2.selectbox("Select Year:", years, key="year_income")
+        col1.selectbox("Escolha o mês:", months, key="month_income")
+        col2.selectbox("Escolha o ano:", years, key="year_income")
 
         "---"
         with st.expander("Adiciona ae nossos ganhos!"):
@@ -69,8 +77,9 @@ if selected == "Entrada do Cacau":
                 + str(st.session_state["month_income"])
             )
             incomes = {income: st.session_state[income] for income in INCOMES}
-            # TODO: insert values into the database
-            st.write("incomes: {}".format(incomes))
+            incomes["period"] = period
+
+            _ = insert_income(incomes)
             st.success("Dados enviados!")
 
 
@@ -149,58 +158,101 @@ if selected == "Entrada da Facada":
     submitted2 = st.button("Send data!", on_click=callback_clear_session)
 
     if submitted2:
-        # TODO: data de criação e data do débito
-        payload = {
-            "product": st.session_state["description"],
-            "category": st.session_state["category_expense"],
-            "sub_category": st.session_state["subcategory_expense"],
-            "total": st.session_state["total"],
-            "type_spent": st.session_state["type_spent"],
-            "type_buy": st.session_state["type_buy"],
-            "bank": st.session_state["bank"],
-            "created_at": st.session_state["date_buy"].strftime("%d-%m-%Y"),
-            "due_date": st.session_state["due_date"].strftime("%d-%m-%Y"),
-        }
-        st.json(payload)
         st.success("Sended Data!")
 
 if selected == "Vendo o Rombo":
     # plot periods
-    st.header("Data Viz")
+    st.header("_Vizús_")
     with st.form("saved_periods"):
-        # TODO: get periods from database
-        period = st.selectbox("Select Period:", ["22022_March"])
+        period = st.selectbox(
+            "Selecione o ano e o mês:",
+            [
+                "2023_01",
+                "2023_02",
+                "2023_03",
+                "2023_04",
+                "2023_05",
+                "2023_06",
+                "2023_07",
+                "2023_08",
+                "2023_09",
+                "2023_10",
+                "2023_11",
+                "2023_12",
+            ],
+        )
         submitted = st.form_submit_button("Plot Period")
         if submitted:
-            # TODO: get data from database
-            comment = "Some comment"
-            incomes = {"Salary": 2000}
-            expenses = {"Car": 1000, "Courses": 125}
+            month = int(period.split("_")[-1])
+            year = int(period.split("_")[0])
+
+            items_expenses = fetch_all_periods_expense()
+            items_incomes = fetch_all_periods_income()
+
+            # dataframe transformations
+            incomes_df = pd.DataFrame(items_incomes)
+            expenses_df = pd.DataFrame(items_expenses)
+
+            incomes_df["month"] = incomes_df["period"].map(
+                lambda x: int(x.split("_")[-1])
+            )
+            incomes_df["year"] = incomes_df["period"].map(
+                lambda x: int(x.split("_")[0])
+            )
+
+            expenses_df["due_month"] = expenses_df["due_date"].map(
+                lambda x: int(x.split("-")[1])
+            )
+            expenses_df["due_year"] = expenses_df["due_date"].map(
+                lambda x: int(x.split("-")[-1])
+            )
+
+            # filtering the data
+            expenses_date_df = expenses_df[
+                (expenses_df["due_year"] == year) & (expenses_df["due_month"] == month)
+            ]
+            incomes_date_df = incomes_df[
+                (incomes_df["year"] == year) & (incomes_df["month"] == month)
+            ]
 
             # create metrics
-            total_income = sum(incomes.values())
-            total_expense = sum(expenses.values())
+            total_income = incomes_date_df.iloc[:, 0:4].values.sum()
+            total_expense = expenses_date_df["total"].sum()
             remaining_budget = total_income - total_expense
+
             col1, col2, col3 = st.columns(3)
             col1.metric("Total Income", f"{total_income} {CURRENCY}")
             col2.metric("Total Expense", f"{total_expense} {CURRENCY}")
-            col3.metric("Remaining Budget", f"{remaining_budget} {CURRENCY}")
-            st.text("Comment {}".format(comment))
+            col3.metric("Diff", f"{remaining_budget} {CURRENCY}")
+
+            # barplots
+            sns.set_theme(style="whitegrid")
+            fig = plt.figure(figsize=(10, 4))
+
+            axs = sns.barplot(
+                x="total", y="category", data=expenses_date_df, errorbar=None
+            )
+            plt.xlabel("Total")
+            plt.ylabel("")
+            _ = show_values(axs, orient="h")
+            _ = sns.despine(left=True, bottom=True)
+
+            st.pyplot(fig)
 
             # graph
-            label = list(incomes.keys()) + ["Total Income"] + list(expenses.keys())
-            source = list(range(len(incomes))) + [len(incomes)] * len(expenses)
-            target = [len(incomes)] * len(incomes) + [
-                label.index(expense) for expense in expenses.keys()
-            ]
-            value = list(incomes.values()) + list(expenses.values())
+            # label = list(incomes.keys()) + ["Total Income"] + list(expenses.keys())
+            # source = list(range(len(incomes))) + [len(incomes)] * len(expenses)
+            # target = [len(incomes)] * len(incomes) + [
+            #     label.index(expense) for expense in expenses.keys()
+            # ]
+            # value = list(incomes.values()) + list(expenses.values())
 
-            # Data to dict, dict to sankey
-            link = dict(source=source, target=target, value=value)
-            node = dict(label=label, pad=20, thickness=30, color="#E694FF")
-            data = go.Sankey(link=link, node=node)
+            # # Data to dict, dict to sankey
+            # link = dict(source=source, target=target, value=value)
+            # node = dict(label=label, pad=20, thickness=30, color="#E694FF")
+            # data = go.Sankey(link=link, node=node)
 
-            # Plot it!
-            fig = go.Figure(data)
-            fig.update_layout(margin=dict(l=0, r=0, t=5, b=5))
-            st.plotly_chart(fig, use_container_width=True)
+            # # Plot it!
+            # fig = go.Figure(data)
+            # fig.update_layout(margin=dict(l=0, r=0, t=5, b=5))
+            # st.plotly_chart(fig, use_container_width=True)

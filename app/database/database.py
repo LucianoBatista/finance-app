@@ -7,16 +7,36 @@ load_dotenv()
 
 PROJECT_DETA_KEY = os.getenv("project_deta_key")
 
-if __name__ == "__main__":
-    # 2) initialize with a project key
-    deta = Deta(PROJECT_DETA_KEY)
+# init with the key
+deta = Deta(PROJECT_DETA_KEY)
 
-    # 3) create and use as many DBs as you want!
-    db = deta.Base("finance_app")
+# This is how to create/connect a database
+db = deta.Base("finance_app")
+db_income = deta.Base("finance_app_income")
 
-    db.insert({"name": "Geordi", "title": "Chief Engineer", "salary": 12})
 
-    fetch_res = db.fetch({"name": "Geordi"})
+def insert_facada(payload):
+    """Returns the report on a successful creation, otherwise raises an error"""
+    return db.put(payload)
 
-    for item in fetch_res.items:
-        db.delete(item["key"])
+
+def insert_income(payload):
+    """Returns the report on a successful creation, otherwise raises an error"""
+    return db_income.put(payload)
+
+
+def fetch_all_periods_expense():
+    """Returns a dict of all periods"""
+    res = db.fetch()
+    return res.items
+
+
+def fetch_all_periods_income():
+    """Returns a dict of all periods"""
+    res = db_income.fetch()
+    return res.items
+
+
+def get_period(period):
+    """If not found, the function will return None"""
+    return db.get(period)
