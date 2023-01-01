@@ -9,6 +9,10 @@ categories:
     - Lazer
     - Trabalho 
     - Marmita
+  Assinaturas:
+    - Disney+
+    - Prime
+    - Spotify
   Casa:
     - Móveis
     - Aluguel
@@ -24,6 +28,19 @@ categories:
     - IPTU
   Celular:
     - Lu/Oi
+  Fotografia:
+    - Assinatura-Adobe
+    - Luz
+    - Lente
+    - Tripé
+    - Câmera
+  YouTube:
+    - Luz
+    - Google Drive
+    - Assinatura-Audiio
+    - Assinatura-Canva
+    - Microfone
+    - Decoração
   Empresa:
     - MEI
   Dog:
@@ -73,6 +90,7 @@ categories:
     - App
     - Ônibus
     - Avião
+    - Aluguel
 expenses:
   - Rent
   - Utilities

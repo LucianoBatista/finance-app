@@ -109,7 +109,7 @@ if selected == "Entrada da Facada":
     st.text_area("Produto/Descrição", key="description")
     st.number_input("Total ou valor da parcela", key="total")
 
-    c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
+    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 1])
     with c1:
         st.radio("Tipo de gasto", ["Variável", "Fixo"], key="type_spent")
 
@@ -122,43 +122,102 @@ if selected == "Entrada da Facada":
     with c4:
         st.radio("Banco", ["Nubank", "BB", "Ticket", "Flash", "Cash"], key="bank")
 
+    with c5:
+        st.radio("Parcelado", ["N", "S"], key="parcela")
+
     "---"
-    st.subheader("Vencimento")
-    c_1, c_2 = st.columns(2)
-    with c_1:
-        st.date_input("Data da Compra", datetime.now(tz=timezone.utc), key="date_buy")
+    if st.session_state["parcela"] == "N":
+        st.subheader("Vencimento")
+        c_1, c_2 = st.columns(2)
+        with c_1:
+            st.date_input(
+                "Data da Compra", datetime.now(tz=timezone.utc), key="date_buy"
+            )
 
-    with c_2:
-        user = st.session_state["user"]
-        type_buy = st.session_state["type_buy"]
-        date_buy = st.session_state["date_buy"]
+        with c_2:
+            user = st.session_state["user"]
+            type_buy = st.session_state["type_buy"]
+            date_buy = st.session_state["date_buy"]
 
-        if type_buy == "débito":
-            date = datetime.now(tz=timezone.utc)
-        elif type_buy == "crédito":
-            # we just have nubank cards for credit shopping
-            if user == "Tica":
-                day = date_buy.day
-                if day < 12:
-                    date = datetime(date_buy.year, date_buy.month, 19)
-                else:
-                    next_date = date_buy + relativedelta(months=1)
-                    date = datetime(next_date.year, next_date.month, 19)
+            if type_buy == "débito":
+                date = datetime.now(tz=timezone.utc)
+            elif type_buy == "crédito":
+                # we just have nubank cards for credit shopping
+                if user == "Tica":
+                    day = date_buy.day
+                    if day < 12:
+                        date = datetime(date_buy.year, date_buy.month, 19)
+                    else:
+                        next_date = date_buy + relativedelta(months=1)
+                        date = datetime(next_date.year, next_date.month, 19)
 
-            elif user == "Luba":
-                day = date_buy.day
-                if day < 8:
-                    date = datetime(date_buy.year, date_buy.month, 15)
-                else:
-                    next_date = date_buy + relativedelta(months=1)
-                    date = datetime(next_date.year, next_date.month, 15)
+                elif user == "Luba":
+                    day = date_buy.day
+                    if day < 8:
+                        date = datetime(date_buy.year, date_buy.month, 15)
+                    else:
+                        next_date = date_buy + relativedelta(months=1)
+                        date = datetime(next_date.year, next_date.month, 15)
 
-        st.date_input("Data de Vencimento", date, key="due_date")
+            st.date_input("Data de Vencimento", date, key="due_date")
 
-    submitted2 = st.button("Send data!", on_click=callback_clear_session)
+        submitted2 = st.button("Send data!", on_click=callback_clear_session)
 
-    if submitted2:
-        st.success("Sended Data!")
+        if submitted2:
+            st.success("Sended Data!")
+    elif st.session_state["parcela"] == "S":
+        st.subheader("Vencimento")
+        st.number_input(
+            "Quantas Parcelas",
+            min_value=0,
+            max_value=100,
+            value=1,
+            step=1,
+            key="qt_parcelas",
+        )
+
+        for i in range(st.session_state["qt_parcelas"]):
+            c_1, c_2, c_3 = st.columns([0.3, 1, 1])
+            with c_1:
+                # st.markdown("Parcela")
+                st.write("Parcela")
+                st.markdown(f"**{i+1}**")
+            with c_2:
+                st.date_input(
+                    "Data da Compra", datetime.now(tz=timezone.utc), key=f"date_buy_{i}"
+                )
+
+            with c_3:
+                user = st.session_state["user"]
+                type_buy = st.session_state["type_buy"]
+                date_buy = st.session_state[f"date_buy_{i}"]
+
+                if type_buy == "débito":
+                    date = datetime.now(tz=timezone.utc)
+                elif type_buy == "crédito":
+                    # we just have nubank cards for credit shopping
+                    if user == "Tica":
+                        day = date_buy.day
+                        if day < 12:
+                            date = datetime(date_buy.year, date_buy.month, 19)
+                        else:
+                            next_date = date_buy + relativedelta(months=1)
+                            date = datetime(next_date.year, next_date.month, 19)
+
+                    elif user == "Luba":
+                        day = date_buy.day
+                        if day < 8:
+                            date = datetime(date_buy.year, date_buy.month, 15)
+                        else:
+                            next_date = date_buy + relativedelta(months=1)
+                            date = datetime(next_date.year, next_date.month, 15)
+
+                st.date_input("Data de Vencimento", date, key=f"due_date_{i}")
+
+        submitted2 = st.button("Send data!", on_click=callback_clear_session)
+
+        if submitted2:
+            st.success("Sended Data!")
 
 if selected == "Vendo o Rombo":
     # plot periods
@@ -238,21 +297,3 @@ if selected == "Vendo o Rombo":
             _ = sns.despine(left=True, bottom=True)
 
             st.pyplot(fig)
-
-            # graph
-            # label = list(incomes.keys()) + ["Total Income"] + list(expenses.keys())
-            # source = list(range(len(incomes))) + [len(incomes)] * len(expenses)
-            # target = [len(incomes)] * len(incomes) + [
-            #     label.index(expense) for expense in expenses.keys()
-            # ]
-            # value = list(incomes.values()) + list(expenses.values())
-
-            # # Data to dict, dict to sankey
-            # link = dict(source=source, target=target, value=value)
-            # node = dict(label=label, pad=20, thickness=30, color="#E694FF")
-            # data = go.Sankey(link=link, node=node)
-
-            # # Plot it!
-            # fig = go.Figure(data)
-            # fig.update_layout(margin=dict(l=0, r=0, t=5, b=5))
-            # st.plotly_chart(fig, use_container_width=True)
