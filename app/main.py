@@ -161,11 +161,6 @@ if selected == "Entrada da Facada":
 
             st.date_input("Data de Vencimento", date, key="due_date")
 
-        # submitted2 = st.button("Send data!", on_click=callback_clear_session)
-
-        # if submitted2:
-        #     st.success("Sended Data!")
-
     elif st.session_state["parcela"] == "S":
         st.subheader("Vencimento")
         st.number_input(

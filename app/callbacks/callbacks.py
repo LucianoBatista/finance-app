@@ -4,7 +4,7 @@ from database.database import insert_facada
 
 def callback_clear_session():
 
-    if st.session_state["qt_parcelas"] > 1:
+    if st.session_state["parcela"] == "S":
         for i in range(st.session_state["qt_parcelas"]):
             qt_parcelas = st.session_state["qt_parcelas"]
             description = st.session_state["description"] + " " + f"{i+1}/{qt_parcelas}"
@@ -23,7 +23,7 @@ def callback_clear_session():
 
             insert_facada(payload)
 
-    elif st.session_state["qt_parcelas"] == 1:
+    elif st.session_state["parcela"] == "N":
         payload = {
             "product": st.session_state["description"],
             "category": st.session_state["category_expense"],
