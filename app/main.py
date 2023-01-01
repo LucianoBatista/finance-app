@@ -272,7 +272,10 @@ if selected == "Vendo o Rombo":
 
             # create metrics
             total_income = incomes_date_df.iloc[:, 0:4].values.sum()
-            total_expense = expenses_date_df["total"].sum()
+            category_totals = (
+                expenses_date_df.groupby(["category"])["total"].sum().reset_index()
+            )
+            total_expense = category_totals["total"].sum()
             remaining_budget = total_income - total_expense
 
             col1, col2, col3 = st.columns(3)
@@ -285,7 +288,7 @@ if selected == "Vendo o Rombo":
             fig = plt.figure(figsize=(10, 4))
 
             axs = sns.barplot(
-                x="total", y="category", data=expenses_date_df, errorbar=None
+                x="total", y="category", data=category_totals, errorbar=None
             )
             plt.xlabel("Total")
             plt.ylabel("")
