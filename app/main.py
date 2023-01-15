@@ -270,29 +270,76 @@ if selected == "Vendo o Rombo":
                 (incomes_df["year"] == year) & (incomes_df["month"] == month)
             ]
 
-            # create metrics
+            # create metrics: Totals
             total_income = incomes_date_df.iloc[:, 0:4].values.sum()
             category_totals = (
                 expenses_date_df.groupby(["category"])["total"].sum().reset_index()
             )
+            subcategories_totals = (
+                expenses_date_df.groupby(["category", "sub_category"])["total"]
+                .sum()
+                .reset_index()
+            )
             total_expense = category_totals["total"].sum()
             remaining_budget = total_income - total_expense
+
+            # create metrics: Credit or Debit
+            expenses_by_type_buy = (
+                expenses_date_df.groupby("type_buy")["total"].agg(sum).reset_index()
+            )
 
             col1, col2, col3 = st.columns(3)
             col1.metric("Total Income", f"{total_income} {CURRENCY}")
             col2.metric("Total Expense", f"{total_expense} {CURRENCY}")
             col3.metric("Diff", f"{remaining_budget} {CURRENCY}")
 
-            # barplots
+            # barplots: by category
             sns.set_theme(style="whitegrid")
             fig = plt.figure(figsize=(10, 4))
 
             axs = sns.barplot(
                 x="total", y="category", data=category_totals, errorbar=None
             )
+            plt.title("Gastos por Categorias")
             plt.xlabel("Total")
             plt.ylabel("")
-            _ = show_values(axs, orient="h")
+            _ = show_values(axs, orient="h", space_y=0.3)
+            _ = sns.despine(left=True, bottom=True)
+
+            st.pyplot(fig)
+
+            # barplots: by subcategory
+            sns.set_theme(style="whitegrid")
+            fig = plt.figure(figsize=(10, 12))
+
+            axs = sns.barplot(
+                x="total",
+                y="sub_category",
+                data=subcategories_totals,
+                hue="category",
+                dodge=False,
+                errorbar=None,
+                palette="tab10",
+            )
+            plt.title("Gastos por Subcategorias")
+            plt.xlabel("Total")
+            plt.ylabel("")
+            _ = show_values(axs, orient="h", space_y=0.4)
+            _ = sns.despine(left=True, bottom=True)
+
+            st.pyplot(fig)
+
+            # barplots: by type buy
+            sns.set_theme(style="whitegrid")
+            fig = plt.figure(figsize=(10, 4))
+
+            axs = sns.barplot(
+                x="total", y="type_buy", data=expenses_by_type_buy, errorbar=None
+            )
+            plt.title("Gastos por Tipo da Compra")
+            plt.xlabel("Total")
+            plt.ylabel("")
+            _ = show_values(axs, orient="h", space_y=0.4)
             _ = sns.despine(left=True, bottom=True)
 
             st.pyplot(fig)
