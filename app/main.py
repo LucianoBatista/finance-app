@@ -215,6 +215,14 @@ if selected == "Entrada da Facada":
     if submitted2:
         st.success("Sended Data!")
 
+    # creating a table to show the last 10 expenses
+    items = fetch_all_periods_expense()
+    data = pd.DataFrame(items)
+    data["created_at"] = pd.to_datetime(data["created_at"], format="%d-%m-%Y")
+    data = data.sort_values(by="created_at", ascending=False)
+    data = data.head(10)
+    st.table(data)
+
 if selected == "Vendo o Rombo":
     # plot periods
     st.header("_Vizús_")
