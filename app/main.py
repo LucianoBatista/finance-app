@@ -220,7 +220,7 @@ if selected == "Entrada da Facada":
     data = pd.DataFrame(items)
     data["created_at"] = pd.to_datetime(data["created_at"], format="%d-%m-%Y")
     data = data.sort_values(by="created_at", ascending=False)
-    data = data.head(10)
+    data = data.head(20)
     st.table(data)
 
 if selected == "Vendo o Rombo":
