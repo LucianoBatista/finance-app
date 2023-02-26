@@ -13,6 +13,10 @@ pyyaml = "==6.0"
 bokeh = "==3.0.3"
 seaborn = "==0.12.1"
 matplotlib = "==3.6.2"
+pandas-datareader = "==0.10.0"
+yfinance = "==0.2.12"
+pycryptodome = "*"
+pycryptodomex = "*"
 
 [dev-packages]
 black = "*"

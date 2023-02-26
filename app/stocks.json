@@ -1,0 +1,140 @@
+{
+    "BBSE3": {
+        "quantity": {
+            "jan": 178,
+            "feb": 178
+        }
+    },
+    "CVCB3": {
+        "quantity": {
+            "jan": 203,
+            "feb": 203
+        }
+    },
+    "EGIE3": {
+        "quantity": {
+            "jan": 165,
+            "feb": 165
+        }
+    },
+    "ENBR3": {
+        "quantity": {
+            "jan": 379,
+            "feb": 379
+        }
+    },
+    "ITSA4": {
+        "quantity": {
+            "jan": 1390,
+            "feb": 1390
+        }
+    },
+    "PETR4": {
+        "quantity": {
+            "jan": 218,
+            "feb": 218
+        }
+    },
+    "TAEE11": {
+        "quantity": {
+            "jan": 162,
+            "feb": 162
+        }
+    },
+    "UNIP6": {
+        "quantity": {
+            "jan": 194,
+            "feb": 194
+        }
+    },
+    "VIVT3": {
+        "quantity": {
+            "jan": 121,
+            "feb": 121
+        }
+    },
+    "WIZC3": {
+        "quantity": {
+            "jan": 389,
+            "feb": 389
+        }
+    },
+    "BRAP4": {
+        "quantity": {
+            "jan": 140,
+            "feb": 140
+        }
+    },
+    "ALUP11": {
+        "quantity": {
+            "jan": 82,
+            "feb": 82
+        }
+    },
+    "TUPY3": {
+        "quantity": {
+            "jan": 100,
+            "feb": 100
+        }
+    },
+    "BPAC11": {
+        "quantity": {
+            "jan": 176,
+            "feb": 176
+        }
+    },
+    "HSML11": {
+        "quantity": {
+            "jan": 24,
+            "feb": 24
+        }
+    },
+    "RBRP11": {
+        "quantity": {
+            "jan": 26,
+            "feb": 26
+        }
+    },
+    "RDOR3": {
+        "quantity": {
+            "jan": 156,
+            "feb": 156
+        }
+    },
+    "ABCB4": {
+        "quantity": {
+            "jan": 169,
+            "feb": 169
+        }
+    },
+    "CCRO3": {
+        "quantity": {
+            "jan": 198,
+            "feb": 198
+        }
+    },
+    "MRVE3": {
+        "quantity": {
+            "jan": 297,
+            "feb": 297
+        }
+    },
+    "ODPV3": {
+        "quantity": {
+            "jan": 108,
+            "feb": 108
+        }
+    },
+    "VALE3": {
+        "quantity": {
+            "jan": 13,
+            "feb": 13
+        }
+    },
+    "CPLE6": {
+        "quantity": {
+            "jan": 99,
+            "feb": 99
+        }
+    }
+}

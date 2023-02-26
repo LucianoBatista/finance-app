@@ -49,8 +49,13 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 # navigation menu
 selected = option_menu(
     menu_title=None,
-    options=["Entrada da Facada", "Entrada do Cacau", "Vendo o Rombo"],
-    icons=["graph-down-arrow", "cash-stack", "bar-chart-fill"],
+    options=[
+        "Entrada da Facada",
+        "Entrada do Cacau",
+        "Vendo o Rombo",
+        "Variável",
+    ],
+    icons=["graph-down-arrow", "cash-stack", "bar-chart-fill", "graph-up-arrow"],
     orientation="horizontal",
 )
 
@@ -351,3 +356,141 @@ if selected == "Vendo o Rombo":
             _ = sns.despine(left=True, bottom=True)
 
             st.pyplot(fig)
+
+if selected == "Variável":
+    st.header("Ações na carteira")
+    st.markdown(
+        """
+        - BBSE3: BB Seguridade
+        - CVCB3: CVC Brasil
+        - EGIE3: Engie Brasil
+        - ENBR3: EDP Brasil
+        - ITSA4: Itausa SA Preference Shares
+        - PETR4: Petroleo Brasileiro SA Petrobras Preference
+        - TAEE11: Taesa S.A.
+        - UNIP6: Unipar Participacoes B Pref Shs
+        - VIVT3: Telefônica Brasil
+        - WIZC3: Wiz Soluções e Corretagem de Seguros S.A.
+        - BRAP4: Bradespar SA Preference Shares
+        - ALUP11: Alupar Investimento SA
+        - TUPY3: Tupy
+        - BPAC11: Banco BTG Pactual SA Unit
+        - HSML11: Hsi Malls Fundo DE Investimento Imobiliario
+        - RBRP11: FI Imobiliario RBR Properties - FII
+        - RDOR3: Rede D'or São Luiz
+        - ABCB4: ABC Brasil
+        - CCRO3: Grupo CCR 
+        - MRVE3: MRV Engenharia e Participacoes SA
+        - ODPV3: Odontoprev
+        - VALE3: Vale S.A.
+        - CPLE6: Companhia Paranaense de Energia
+        """
+    )
+
+    sectors = {
+        "BBSE3": "Financeiro / Previdência e Seguros / Seguradoras",
+        "CVCB3": "Consumo Cíclico / Viagens e Lazer / Viagens e Turismo",
+        "EGIE3": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+        "ENBR3": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+        "ITSA4": "Financeiro / Intermediários Financeiros / Bancos",
+        "PETR4": "Petróleo. Gás e Biocombustíveis / Petróleo. Gás e Biocombustíveis / Exploração. Refino e Distribuição",
+        "TAEE11": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+        "UNIP6": "Materiais Básicos / Químicos / Químicos Diversos",
+        "VIVT3": "Comunicações / Telecomunicações / Telecomunicações",
+        "WIZC3": "Financeiro / Previdência e Seguros / Corretoras de Seguros e Resseguros",
+        "BRAP4": "Materiais Básicos / Mineração / Minerais Metálicos",
+        "ALUP11": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+        "TUPY3": "Bens Industriais / Material de Transporte / Material Rodoviário",
+        "BPAC11": "Financeiro / Intermediários Financeiros / Bancos",
+        "HSML11": "Fundo Imobiliário",
+        "RBRP11": "Fundo Imobiliário",
+        "RDOR3": "Saúde / Serv.Méd.Hospit..Análises e Diagnósticos / Serv.Méd.Hospit..Análises e Diagnósticos",
+        "ABCB4": "Financeiro / Intermediários Financeiros / Bancos",
+        "CCRO3": "Bens Industriais / Transporte / Exploração de Rodovias",
+        "MRVE3": "Consumo Cíclico / Construção Civil / Incorporações",
+        "ODPV3": "Saúde / Serv.Méd.Hospit..Análises e Diagnósticos / Serv.Méd.Hospit..Análises e Diagnósticos",
+        "VALE3": "Materiais Básicos / Mineração / Minerais Metálicos",
+        "CPLE6": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+    }
+
+    df_qtd = pd.read_csv("app/stocks_qtt.csv")
+    df_patrimonio = pd.read_csv("app/stocks_patrimonio.csv")
+
+    st.header("Qtd de Ações por Setor")
+    companies_sectors_df = pd.DataFrame(
+        {"companies": sectors.keys(), "sector": sectors.values()}
+    )
+    companies_sectors_df["sector_simple"] = (
+        companies_sectors_df["sector"].str.split("/").map(lambda x: x[0])
+    )
+
+    sector_pie = (
+        df_qtd.merge(
+            companies_sectors_df, left_on="stock", right_on="companies", how="left"
+        )
+        .groupby("sector_simple")["feb"]
+        .agg(sum)
+        .reset_index()
+    )
+
+    quantities = sector_pie["feb"]
+    labels = sector_pie["sector_simple"]
+
+    colors = sns.color_palette("pastel")[0:13]
+
+    fig = plt.figure(figsize=(10, 4))
+    plt.pie(quantities, labels=labels, colors=colors, autopct="%.0f%%")
+    plt.title("Considerando o mês de Fevereiro de 2023")
+    st.pyplot(fig)
+
+    st.header("R$ de Ações por Setor")
+
+    sector_pie = (
+        df_patrimonio.merge(
+            companies_sectors_df, left_on="stock", right_on="companies", how="left"
+        )
+        .groupby("sector_simple")["feb"]
+        .agg(sum)
+        .reset_index()
+    )
+
+    quantities = sector_pie["feb"]
+    labels = sector_pie["sector_simple"]
+
+    colors = sns.color_palette("pastel")[0:13]
+
+    fig = plt.figure(figsize=(10, 4))
+    plt.pie(quantities, labels=labels, colors=colors, autopct="%.0f%%")
+    plt.title("Considerando o mês de Fevereiro de 2023")
+    st.pyplot(fig)
+
+    # pie by company
+    st.header("Qtd de Ações por Empresa")
+    quantities = df_qtd["feb"]
+    labels = df_qtd["stock"]
+
+    colors = sns.color_palette("pastel")[0:18]
+
+    fig = plt.figure(figsize=(10, 4))
+    plt.pie(quantities, labels=labels, colors=colors, autopct="%.0f%%")
+    st.pyplot(fig)
+
+    st.header("Evolução ao longo do ano")
+
+    df_lines = df_patrimonio.melt(id_vars="stock")
+
+    fig = plt.figure(figsize=(10, 9))
+    _ = sns.lineplot(
+        data=df_lines, x="variable", y="value", hue="stock", palette="tab20b"
+    )
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
+    plt.xlabel("")
+    plt.ylabel("Total R$")
+    st.pyplot(fig)
+
+    st.header("Totais Absolutos")
+    fig = plt.figure(figsize=(10, 4))
+    df_totals = df_patrimonio.drop("stock", axis=1).sum(axis=0).reset_index()
+    axs = sns.barplot(data=df_totals, x="index", y=0)
+    _ = show_values(axs, orient="v", space_y=0.0)
+    st.pyplot(fig)
