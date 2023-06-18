@@ -27,7 +27,7 @@ EXPENSES = configs["expenses"]
 CURRENCY = "R$"
 PAGE_TITLE = "Gastos e Entradas"
 PAGE_ICON = ":knife: :money_with_wings:"
-LAYOUT = "centered"
+LAYOUT = "wide"
 
 st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON, layout=LAYOUT)
 st.title(PAGE_TITLE + " " + PAGE_ICON)
@@ -46,6 +46,18 @@ hide_st_style = """
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
+st.header("KPIs - WIP")
+kpi1, kpi2, kpi3 = st.columns(3)
+
+kpi1.metric("Gastos do mês", "R$ 1.000,00")
+kpi2.metric("Entradas", "R$ 1.000,00")
+kpi3.metric("Valor ações - Mês passado", "R$ 1.000,00")
+
+st.text("")
+st.text("")
+st.text("")
+st.text("")
+
 # navigation menu
 selected = option_menu(
     menu_title=None,
@@ -58,6 +70,7 @@ selected = option_menu(
     icons=["graph-down-arrow", "cash-stack", "bar-chart-fill", "graph-up-arrow"],
     orientation="horizontal",
 )
+
 
 # input and save periods
 if selected == "Entrada do Cacau":
@@ -220,13 +233,14 @@ if selected == "Entrada da Facada":
     if submitted2:
         st.success("Sended Data!")
 
-    # creating a table to show the last 10 expenses
-    items = fetch_all_periods_expense()
-    data = pd.DataFrame(items)
-    data["created_at"] = pd.to_datetime(data["created_at"], format="%d-%m-%Y")
-    data = data.sort_values(by="created_at", ascending=False)
-    data = data.head(20)
-    st.table(data)
+        # creating a table to show the last 10 expenses
+        items = fetch_all_periods_expense()
+        data = pd.DataFrame(items)
+        data["created_at"] = pd.to_datetime(data["created_at"], format="%d-%m-%Y")
+        data = data.sort_values(by="created_at", ascending=False)
+        data.drop(["key"], axis=1, inplace=True)
+        data = data.head(20)
+        st.table(data)
 
 if selected == "Vendo o Rombo":
     # plot periods
